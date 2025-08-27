@@ -2,15 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Param, ParseIntPipe,
   Post,
   UseGuards,
-  UsePipes,
   Request,
   ValidationPipe, UseInterceptors, UploadedFiles,
 } from '@nestjs/common';
 import { VkService } from './vk.service';
-import { AuthGuard } from '@nestjs/passport';
 import { CreateVkPostDto } from './dto/Dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { RequestWithUser } from '../../common/interfaces/userRequest.interface';

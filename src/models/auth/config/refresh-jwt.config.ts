@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { JwtModuleOptions, JwtSignOptions } from '@nestjs/jwt';
+import { JwtSignOptions } from '@nestjs/jwt';
 import * as process from 'node:process';
 
 

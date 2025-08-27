@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { CreatePlaceholderDto, UpdateOrderDto, UpdatePlaceholderDto } from './dto/placeholder.dto';
+import { CreatePlaceholderDto, UpdatePlaceholderDto } from './dto/placeholder.dto';
 import { PlaceholderService } from './placeholder.service';
-import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';

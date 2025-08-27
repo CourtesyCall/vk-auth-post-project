@@ -9,7 +9,6 @@ import { RedisService } from '../../redis/redis.service';
 import { Role } from '../users/enums/roles.enums';
 import { AuthJwtPayload } from './dto/auth-jwtPayload';
 import refreshJwtConfig from './config/refresh-jwt.config';
-import { stringify } from 'ts-jest';
 
 @Injectable()
 export class AuthService {
