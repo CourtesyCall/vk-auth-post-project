@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+  postgresql:
+    image: postgres
+    container_name: vk_app_postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER} # Используется из .env
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Используется из .env
+      POSTGRES_DB: ${POSTGRES_DB} # Используется из .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck: # <-- ДОБАВЛЕНО
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine3.20
+    container_name: redis-vk
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+    healthcheck: # <-- ДОБАВЛЕНО (опционально, но хорошо для Redis тоже)
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"] # Простая проверка для Redis
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    container_name: vk_app_backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DB_HOST: postgresql
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      VK_CLIENT_ID: ${VK_CLIENT_ID}
+      VK_CLIENT_SECRET: ${VK_CLIENT_SECRET}
+      VK_REDIRECT_URI: ${VK_REDIRECT_URI} # Убедись, что здесь нет опечатки (убери # если есть)
+      VK_API_VERSION: ${VK_API_VERSION:-5.199}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: ${APP_PORT}
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on: # <-- ИЗМЕНЕНО
+      postgresql:
+        condition: service_healthy # Ждем, пока PostgreSQL будет "здоров"
+      redis:
+        condition: service_healthy # Ждем, пока Redis будет "здоров"
+    restart: unless-stopped
+    # command: npm run start:dev
+
+volumes:
+  postgres_data:
+  redis_data:
