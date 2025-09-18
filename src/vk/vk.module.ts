@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from '../users/users.module';
 import { PlaceholderModule } from '../placeholder/placeholder.module';
 import { AuthModule } from '../auth/auth.module';
-import { RedisModule } from '../../redis/redis.module';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [

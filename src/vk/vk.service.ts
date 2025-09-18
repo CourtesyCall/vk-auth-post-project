@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { PlaceholderService } from '../placeholder/placeholder.service';
 import { firstValueFrom } from 'rxjs';
-import { RedisService } from '../../redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 import { CreateVkPostDto } from './dto/Dto';
 import { User } from '../users/user.entity/user.entity';
 
@@ -40,7 +40,7 @@ export class VkService {
     // --- ЭТАП А: Загружаем каждое изображение ---
     for (const file of files) {
       // 1. Получаем адрес сервера для загрузки фото
-      const getUploadServerUrl = `https://api.vk.com/method/photos.getWallUploadServer`;
+      const getUploadServerUrl = `https://api.vk.ru/method/photos.getWallUploadServer`;
       const uploadServerResponse = await firstValueFrom(
         this.httpService.get(getUploadServerUrl, { params: { group_id: groupId, access_token: accessToken, v: '5.199' } })
       );

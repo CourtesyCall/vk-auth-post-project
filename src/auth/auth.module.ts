@@ -6,7 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { RedisModule } from '../../redis/redis.module';
+import { RedisModule } from '../redis/redis.module';
 import { RolesGuard } from './guards/roles.guard';
 import jwtConfig from './config/jwt.config';
 import refreshJwtConfig from './config/refresh-jwt.config';

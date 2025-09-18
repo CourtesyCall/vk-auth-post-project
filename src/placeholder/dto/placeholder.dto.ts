@@ -1,11 +1,14 @@
-import { IsArray, IsIn, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsBoolean, IsIn, IsInt, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
 
 
 export class CreatePlaceholderDto {
-  @IsIn(['text', 'checkbox', 'page'])
-  type: 'text' | 'checkbox' | 'page';
+  @IsInt()
+  sectionId: number;
+
+  @IsIn(['text', 'checkbox', 'page', 'select'])
+  type: 'text' | 'checkbox' | 'page' | 'select';
 
   @IsString()
   name: string;
@@ -17,6 +20,15 @@ export class CreatePlaceholderDto {
   @IsOptional()
   @IsString()
   value?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isRequired?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  options?: string[];
 }
 
 

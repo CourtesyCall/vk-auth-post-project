@@ -13,7 +13,7 @@ import {
 import { UsersService } from './users.service';
 
 import { UpdateProfileDto } from './dto/UserDto';
-import { RequestWithUser } from '../../common/interfaces/userRequest.interface';
+import { RequestWithUser } from '../common/interfaces/userRequest.interface';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { SetRoleDto } from './dto/set-role.dto';

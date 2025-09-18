@@ -2,27 +2,39 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { CreatePlaceholderDto, UpdatePlaceholderDto } from './dto/placeholder.dto';
-import { PlaceholerEntity } from './placeholer.entity/placeholer.entity';
+import { PlaceholderEntity } from './placeholer.entity/placeholderEntity';
+import { Section } from '../section/entities/section.entity';
 
 @Injectable()
 export class PlaceholderService {
 
   constructor(
-    @InjectRepository(PlaceholerEntity)
-    private readonly placeholderRepo: Repository<PlaceholerEntity>,
+    @InjectRepository(PlaceholderEntity)
+    private readonly placeholderRepo: Repository<PlaceholderEntity>,
+    @InjectRepository(Section)
+    private readonly sectionRepo: Repository<Section>,
     private dataSource: DataSource,
   ) {}
 
-  async create(createPlaceholderDto: CreatePlaceholderDto): Promise<PlaceholerEntity> {
+  async create(createPlaceholderDto: CreatePlaceholderDto): Promise<PlaceholderEntity> {
+    const { sectionId, ...restDto } = createPlaceholderDto;
+    const section = await this.sectionRepo.findOneBy({ id: sectionId });
+    if (!section) {
+      throw new NotFoundException(`Раздел с ID ${sectionId} не найден.`);
+    }
+
+    // Находим максимальный sortIndex ВНУТРИ ЭТОГО РАЗДЕЛА
     const maxPlaceholder = await this.placeholderRepo.createQueryBuilder("placeholder")
+      .where("placeholder.sectionId = :sectionId", { sectionId })
       .orderBy("placeholder.sortIndex", "DESC")
       .getOne();
 
     const newSortIndex = maxPlaceholder ? maxPlaceholder.sortIndex + 1 : 1;
 
     const placeholder = this.placeholderRepo.create({
-      ...createPlaceholderDto,
+      ...restDto,
       sortIndex: newSortIndex,
+      section: section, // <-- Привязываем найденный раздел
     });
 
     return this.placeholderRepo.save(placeholder);
@@ -75,7 +87,7 @@ export class PlaceholderService {
 
     try {
       const updatePromises = order.map(({ id, sortIndex }) =>
-        queryRunner.manager.update(PlaceholerEntity, id, { sortIndex })
+        queryRunner.manager.update(PlaceholderEntity, id, { sortIndex })
       );
 
       await Promise.all(updatePromises);

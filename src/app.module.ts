@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './models/auth/auth.module';
-import { UsersModule } from './models/users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { VkModule } from './models/vk/vk.module';
-import { PlaceholderModule } from './models/placeholder/placeholder.module';
+import { VkModule } from './vk/vk.module';
+import { PlaceholderModule } from './placeholder/placeholder.module';
 import config from  './configurations/index';
 import { RedisModule } from './redis/redis.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { TemplateModule } from './template/template.module';
+import { SectionModule } from './section/section.module';
 
 @Module({
   imports: [
@@ -40,6 +42,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
     VkModule,
     PlaceholderModule,
     RedisModule,
+    TemplateModule,
+    SectionModule,
   ],
 
 

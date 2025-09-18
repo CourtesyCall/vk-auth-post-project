@@ -5,7 +5,7 @@ import { UsersService } from '../users/users.service';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { User } from '../users/user.entity/user.entity';
-import { RedisService } from '../../redis/redis.service';
+import { RedisService } from '../redis/redis.service';
 import { Role } from '../users/enums/roles.enums';
 import { AuthJwtPayload } from './dto/auth-jwtPayload';
 import refreshJwtConfig from './config/refresh-jwt.config';
@@ -39,7 +39,7 @@ export class AuthService {
 
     try {
       // Обмен кода на access_token через VK API
-      const vkOAuthUrl = 'https://id.vk.com/oauth2/auth';// Корректный URL для обмена кода
+      const vkOAuthUrl = 'https://id.vk.ru/oauth2/auth';// Корректный URL для обмена кода
 
 
       const vkResponse = await firstValueFrom(
