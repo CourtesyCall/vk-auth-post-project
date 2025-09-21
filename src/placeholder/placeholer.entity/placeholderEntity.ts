@@ -28,6 +28,10 @@ export class PlaceholderEntity
   @Column({ default: false })
   isRequired: boolean
 
+  @Column({ default: false })
+  isMultiChoice: boolean;
+
+
   @Column({
     type: 'jsonb',
     nullable: true,

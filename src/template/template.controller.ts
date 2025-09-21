@@ -35,6 +35,7 @@ export class TemplateController {
   }
 
   @Get()
+  @Roles(Role.USER)
   @HttpCode(HttpStatus.OK)
   findAll() {
     this.logger.log('Fetching all templates');
@@ -42,6 +43,7 @@ export class TemplateController {
   }
 
   @Get(':id')
+  @Roles(Role.USER)
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id', ParseIntPipe) id: number) {
     this.logger.log(`Fetching template with id: ${id}`);

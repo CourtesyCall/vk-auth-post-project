@@ -36,6 +36,7 @@ export class SectionController {
   }
 
   @Get()
+  @Roles(Role.USER)
   @HttpCode(HttpStatus.OK)
   findAll() {
     this.logger.log('Fetching all sections');
@@ -50,6 +51,7 @@ export class SectionController {
   }
 
   @Get(':id')
+  @Roles(Role.USER)
   @HttpCode(HttpStatus.OK)
   findOne(@Param('id', ParseIntPipe) id: number) {
     this.logger.log(`Fetching section with id: ${id}`);

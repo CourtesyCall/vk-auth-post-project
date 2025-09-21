@@ -29,6 +29,10 @@ export class CreatePlaceholderDto {
   @IsArray()
   @IsString({ each: true })
   options?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isMultiChoice?: boolean;
 }
 
 
