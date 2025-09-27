@@ -45,13 +45,13 @@ export class SectionService {
 
   findAll() {
     // Обычно разделы получают в контексте шаблона, но для админки можно и так
-    return this.sectionRepository.find({ relations: ['template'] });
+    return this.sectionRepository.find({ relations: ['templates'] });
   }
 
   async findOne(id: number): Promise<Section> {
     const section = await this.sectionRepository.findOne({
       where: { id },
-      relations: ['template', 'placeholders'] // Загружаем связанные сущности
+      relations: ['templates', 'placeholders'] // Загружаем связанные сущности
     });
     if (!section) {
       throw new NotFoundException(`Раздел с ID ${id} не найден.`);
@@ -61,7 +61,7 @@ export class SectionService {
 
   async update(id: number, updateSectionDto: UpdateSectionDto): Promise<Section> {
     // При обновлении мы не меняем шаблон, поэтому логика проще
-    const section = await this.findOne(id); // Проверяем, что раздел существует
+    await this.findOne(id); // Проверяем, что раздел существует
 
     // Удаляем templateId из DTO, чтобы случайно его не изменить
     const { templateId, ...restDto } = updateSectionDto;
