@@ -19,7 +19,8 @@ export class VkService {
     private readonly usersService: UsersService,
     private readonly placeholderService: PlaceholderService, // Внедряем PlaceholderService
     private readonly redisService: RedisService,
-  ) {}
+  ) {
+  }
 
   async createPostWithAttachments(userId: number, dto: CreateVkPostDto, files: Array<Express.Multer.File>) {
     const user: User | null = await this.usersService.findById(userId);
@@ -29,8 +30,8 @@ export class VkService {
     console.log('/////////////////////');
     console.log('user ' + user);
     const { message, groupId } = dto;
-    console.log("message " + message);
-    console.log('groupId -' +groupId);
+    console.log('message ' + message);
+    console.log('groupId -' + groupId);
     const accessToken = await this.redisService.get(`vk_access_token:${userId}`);
 
     if (!accessToken) throw new UnauthorizedException('VK токен не найден');
@@ -42,7 +43,13 @@ export class VkService {
       // 1. Получаем адрес сервера для загрузки фото
       const getUploadServerUrl = `https://api.vk.ru/method/photos.getWallUploadServer`;
       const uploadServerResponse = await firstValueFrom(
-        this.httpService.get(getUploadServerUrl, { params: { group_id: groupId, access_token: accessToken, v: '5.199' } })
+        this.httpService.get(getUploadServerUrl, {
+          params: {
+            group_id: groupId,
+            access_token: accessToken,
+            v: '5.199',
+          },
+        }),
       );
       const uploadUrl = uploadServerResponse.data.response.upload_url;
       console.log('uploadUrl ', uploadUrl);
@@ -50,15 +57,26 @@ export class VkService {
       const formData = new FormData();
       formData.append('file', file.buffer, { filename: file.originalname, contentType: file.mimetype });
       const uploadResponse = await firstValueFrom(
-        this.httpService.post(uploadUrl, formData, { headers: formData.getHeaders(),maxBodyLength: Infinity,
-          maxContentLength: Infinity, })
+        this.httpService.post(uploadUrl, formData, {
+          headers: formData.getHeaders(), maxBodyLength: Infinity,
+          maxContentLength: Infinity,
+        }),
       );
       const { server, photo, hash } = uploadResponse.data;
       console.log('server ', server);
       // 3. Сохраняем фото в VK
       const savePhotoUrl = `https://api.vk.com/method/photos.saveWallPhoto`;
       const savedPhotoResponse = await firstValueFrom(
-        this.httpService.post(savePhotoUrl, null, { params: { group_id: groupId, server, photo, hash, access_token: accessToken, v: '5.199' } })
+        this.httpService.post(savePhotoUrl, null, {
+          params: {
+            group_id: groupId,
+            server,
+            photo,
+            hash,
+            access_token: accessToken,
+            v: '5.199',
+          },
+        }),
       );
       const photoData = savedPhotoResponse.data.response[0];
       attachments.push(`photo${photoData.owner_id}_${photoData.id}`);
@@ -66,25 +84,26 @@ export class VkService {
 
     // --- ЭТАП Б: Публикуем пост с прикрепленными фото ---
     const postUrl = `https://api.vk.com/method/wall.post`;
-    const response = await firstValueFrom(this.httpService.post(postUrl, null, {
-      params: {
-        owner_id: `-${groupId}`,
-        from_group: 1,
-        message: message,
-        attachments: attachments.join(','), // Прикрепляем все фото через запятую
-        access_token: accessToken,
-        v: '5.199',
-      },
-    }));
+
+
+    const postData = new URLSearchParams();
+    postData.append('owner_id', `-${groupId}`);
+    postData.append('from_group', '1');
+    postData.append('message', message);
+    postData.append('attachments', attachments.join(','));
+    postData.append('access_token', accessToken);
+    postData.append('v', '5.199');
+
+
+    const response = await firstValueFrom(this.httpService.post(postUrl, postData));
 
     if (response.data?.error) {
       throw new Error(`VK Error: ${JSON.stringify(response.data?.error)}`);
     }
 
     console.log('Response - ' + JSON.stringify(response.data));
-    return {message: "OK"};
+    return { message: 'OK' };
   }
-
 
 
   // The old method of posting
@@ -107,7 +126,7 @@ export class VkService {
       throw new Error(`VK Error: ${JSON.stringify(response.data.error)}`);
     }
 
-    return response.data
+    return response.data;
   }
 
 
