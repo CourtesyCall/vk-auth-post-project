@@ -48,9 +48,10 @@ export class VkService {
       console.log('uploadUrl ', uploadUrl);
       // 2. Загружаем фото на полученный адрес
       const formData = new FormData();
-      formData.append('photo', file.buffer, file.originalname);
+      formData.append('file', file.buffer, { filename: file.originalname, contentType: file.mimetype });
       const uploadResponse = await firstValueFrom(
-        this.httpService.post(uploadUrl, formData, { headers: formData.getHeaders() })
+        this.httpService.post(uploadUrl, formData, { headers: formData.getHeaders(),maxBodyLength: Infinity,
+          maxContentLength: Infinity, })
       );
       const { server, photo, hash } = uploadResponse.data;
       console.log('server ', server);

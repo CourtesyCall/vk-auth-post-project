@@ -38,7 +38,21 @@ export class VkController {
   @Post('post/mutated')
   // Указываем, что мы ожидаем до 10 файлов в поле 'attachments'
   @UseInterceptors(FilesInterceptor('attachments', 10, {
-    storage: memoryStorage()
+    storage: memoryStorage(),
+    limits: {
+      files: 10,                                  // максимум файлов
+      fileSize: 50 * 1024 * 1024,                 // <= 50 MB на файл
+      fieldSize: 10 * 1024 * 1024,                // текстовые поля в multipart (на всякий случай)
+    },
+    fileFilter: (req, file, cb) => {
+      // Разрешаем картинки, gif и видео; при желании сузить список
+      if (
+        file.mimetype.startsWith('image/') ||
+        file.mimetype.startsWith('video/')
+      ) return cb(null, true);
+
+      cb(new Error('Недопустимый тип файла'), false);
+    },
   }))
   createPost(
     @Request() req: RequestWithUser,

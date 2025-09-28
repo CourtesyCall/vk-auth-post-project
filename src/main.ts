@@ -32,8 +32,8 @@ async function bootstrap() {
   app.use(compression());
 
   // Лимиты на тело запроса (DoS/мусор)
-  app.use(json({ limit: '1mb' }));
-  app.use(urlencoded({ limit: '1mb', extended: true }));
+  app.use(json({ limit: '10mb' }));
+  app.use(urlencoded({ limit: '10mb', extended: true }));
 
   // В нашем случае лишнее, проект не использует куки авторизацию, у нас токен стейтлесс
   //app.use(cookieParser());
