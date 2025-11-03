@@ -12,6 +12,7 @@ import { RedisModule } from './redis/redis.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TemplateModule } from './template/template.module';
 import { SectionModule } from './section/section.module';
+import { DraftsModule } from './drafts/drafts.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SectionModule } from './section/section.module';
     RedisModule,
     TemplateModule,
     SectionModule,
+    DraftsModule,
   ],
 
 
