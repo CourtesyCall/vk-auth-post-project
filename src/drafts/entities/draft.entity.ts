@@ -20,10 +20,6 @@ export class Draft {
   @ManyToOne(() => Template, { nullable: false, eager: false })
   template: Template;
 
-  @Column({unique: true})
-  user_id: number;
-  @Column()
-  template_id: number;
   // 3. Используем 'jsonb' для PostgreSQL.
   // 'json' для MySQL
   @Column({
